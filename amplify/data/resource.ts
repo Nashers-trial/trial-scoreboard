@@ -6,20 +6,57 @@ adding a new "isDone" field as a boolean. The authorization rule below
 specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
-const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
-});
+const trialDays = ["Fri", "Sat", "Sun"];
+const trialLevels = ["PDC", "PSA1", "PSA2", "PSA3"];
+
+const schema = a
+  .schema({
+    Team: a
+      .model({
+        teamId: a.id().required(),
+        handlerName: a.string().required(),
+        dogName: a.string().required(),
+        trialLevel: a.enum(trialLevels),
+        trialLeg: a.enum(["PDC", "1st", "2nd"]),
+        trialDay: a.enum(trialDays),
+        obOrder: a.integer(),
+        obScore: a.float(),
+        obResult: a.enum(["-", "PULL", "PASSED", "NOTPASSED", "DISQ", "BITE"]),
+        proOrder: a.integer(),
+        proScore: a.float(),
+        proResult: a.enum(["-", "PULL", "PASSED", "NOTPASSED", "DISQ", "NOOUT"]),
+        totalScore: a.float(),
+        Result: a.enum(["-", "PASSED", "PASSEDDIST" , "NOTPASSED"])
+      })
+      .identifier(["teamId"]),
+    LevelOrder: a
+      .model({
+        level: a.enum(trialLevels),
+        order: a.integer().required()
+      }),
+    TrialDay: a
+      .model({
+        day: a.enum(trialDays),
+        trialOrder: a.hasMany("LevelOrder", "order"),
+        obComplete: a.boolean(),
+        proComplete: a.boolean(),
+        dayComplete: a.boolean()
+      })
+  }) 
+  .authorization((allow) => [
+    // Allow anyone auth'd with an API key to read scoreboard entries.
+    allow.publicApiKey().to(['read']),
+    // Allow signed-in user in the editors group to create, read, update,
+    // and delete scoreboard entries.
+    allow.group('editors'),
+  ]);
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
+    defaultAuthorizationMode: "userPool",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
