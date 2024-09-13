@@ -17,6 +17,7 @@ import { getUrl } from "aws-amplify/storage";
 import { uploadData } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
+
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
@@ -87,9 +88,13 @@ export default function App() {
 
     fetchNotes();
   }
+  
+  //backgroundImage="https://s3.eu-north-1.amazonaws.com/k9bite.club/images/94C0F6C5-DC9F-4808-AE13-6C75627D6126.png"
 
   return (
-    <Authenticator>
+    <Authenticator
+      hideSignUp
+    >
       {({ signOut }) => (
         <Flex
           className="App"
@@ -183,5 +188,3 @@ export default function App() {
     </Authenticator>
   );
 }
-
-1§
