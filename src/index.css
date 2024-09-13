@@ -17,6 +17,10 @@
   background-image: url("https://s3.eu-north-1.amazonaws.com/k9bite.club/images/94C0F6C5-DC9F-4808-AE13-6C75627D6126.png");
   background-repeat: no-repeat;
   background-color: #cccccc;
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
 
 }
 
